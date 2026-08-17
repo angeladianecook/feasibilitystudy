@@ -7,12 +7,10 @@ __pycache__/
 .env
 .DS_Store
 
-# Generated data (regenerate via scripts/generate_synthetic_data.py or
-# scripts/generate_data.py)
-data/raw/*.csv
+# Generated data (regenerate via scripts/generate_data.py and
+# scripts/load_duckdb.py)
 data/processed/*.csv
 data/*.csv
 data/*.db
 data/*.duckdb
-!data/raw/.gitkeep
 !data/processed/.gitkeep
