@@ -132,7 +132,7 @@ def write_summary(df, ols, poisson, negbin, var_table: pd.DataFrame):
         "",
         "OLS's AIC is on a Gaussian likelihood and isn't directly comparable in scale "
         "to the two count-model AICs, but all three are reported for completeness. "
-        "Ranked by AIC: negative binomial (best) < OLS < Poisson (worst) -- a naive "
+        "Ranked by AIC: negative binomial (best) < OLS < Poisson (worst). A naive "
         "Poisson fit is actually the *worst* of the three here, which is itself the "
         "overdispersion story below.",
         "",
@@ -142,7 +142,7 @@ def write_summary(df, ols, poisson, negbin, var_table: pd.DataFrame):
         f"distribution (empirical variance/mean ratio = {actual_ratio:.2f}, i.e. "
         f"variance is ~{actual_ratio:.0f}x the mean). OLS assumes a continuous, "
         f"homoscedastic, potentially-negative outcome, none of which hold for "
-        f"enrollment counts -- it can and does predict negative enrollment for "
+        f"enrollment counts: it can and does predict negative enrollment for "
         f"some sites, and its constant-variance assumption understates spread for "
         f"high-enrollment sites and overstates it for low ones.",
         f"- Poisson regression models the count correctly (non-negative, integer) "
@@ -150,7 +150,7 @@ def write_summary(df, ols, poisson, negbin, var_table: pd.DataFrame):
         f"fitted Poisson model is {pearson_dispersion:.2f}, far above 1.0, confirming "
         f"severe overdispersion. Because Poisson's likelihood is tightly coupled to "
         f"that (wrong) Var=Mean assumption, the mismatch is punished directly in the "
-        f"log-likelihood -- which is why Poisson's AIC ({poisson.aic:.1f}) ends up "
+        f"log-likelihood, which is why Poisson's AIC ({poisson.aic:.1f}) ends up "
         f"*worse* than OLS's ({ols.aic:.1f}) despite modeling the right kind of "
         f"outcome. A good mean-structure fit is not enough if the variance "
         f"assumption is this wrong.",
@@ -161,7 +161,7 @@ def write_summary(df, ols, poisson, negbin, var_table: pd.DataFrame):
         f"execution, referral surges, seasonal effects, etc. that Poisson's "
         f"single-parameter mean-variance link can't absorb). That's why it has the "
         f"lowest AIC of the three ({negbin.aic:.1f}) and is the appropriate model "
-        f"for this target -- it keeps Poisson's correct count structure while "
+        f"for this target: it keeps Poisson's correct count structure while "
         f"actually fitting the observed variance.",
         "",
         "## Coefficients",

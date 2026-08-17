@@ -14,13 +14,13 @@ A site can run more than one study concurrently, each with its own
 study-relative "month" index (month 1 = that study's first month at that
 site). To get one enrollment trajectory per site, patients_enrolled is
 summed across all of a site's concurrent studies at each month index before
-taking the cumulative sum -- an approximation (it overlays relative
+taking the cumulative sum, an approximation (it overlays relative
 timelines rather than calendar time) but a reasonable one for a site-level
 "how fast does this site fill a cohort" question. Sites that never
 participated in any study (absent from enrollment.csv, ~38 of 1,000) have
 no observation window and are excluded from the survival cohort.
 
-TARGET_ENROLLMENT = 20 cumulative patients is used as the milestone -- a
+TARGET_ENROLLMENT = 20 cumulative patients is used as the milestone: a
 round, feasibility-relevant cohort size (e.g. enough for an early
 safety/efficacy look), not a per-study enrollment target (studies.csv's
 target_enrollment is a whole-study total split across many sites, not a
@@ -30,7 +30,7 @@ modeling.
 
 Fits a Kaplan-Meier curve (overall) and a Cox proportional hazards model
 with predictors prior_enrollment_rate, site_experience, eligible_population,
-competing_trials (standardized for numerical stability -- eligible_population
+competing_trials (standardized for numerical stability since eligible_population
 spans ~10^2 to ~10^5). Saves the KM plot to outputs/km_curve.png and prints
 the Cox hazard ratios with an interpretation.
 
@@ -186,15 +186,15 @@ def main():
         f"at {hr['prior_enrollment_rate']:.2f}x the rate of an average site at every month, i.e. "
         f"faster; site_experience (HR={hr['site_experience']:.2f}, p<0.005) points the same "
         f"direction, and competing_trials (HR={hr['competing_trials']:.2f}, p<0.005) pulls the "
-        f"other way -- more competing trials at a site slow its path to the milestone, consistent "
+        f"other way: more competing trials at a site slow its path to the milestone, consistent "
         f"with competition for the same eligible patients. eligible_population "
         f"(HR={hr['eligible_population']:.2f}, p={pvals['eligible_population']:.2f}) is *not* "
-        f"statistically significant here -- population alone doesn't predict enrollment speed once "
+        f"statistically significant here; population alone doesn't predict enrollment speed once "
         f"the site's own historical rate and experience are already in the model, echoing the "
         f"'population exists but can't recruit it' gap surfaced in the feasibility queries. "
         f"Censoring matters here because "
         f"{n_censored} of {len(df)} sites ({1 - df['target_reached'].mean():.1%}) never reached "
-        f"{TARGET_ENROLLMENT} patients within their observed window -- their true time-to-target is "
+        f"{TARGET_ENROLLMENT} patients within their observed window; their true time-to-target is "
         f"unknown and could be much later (or never), not zero or 'failed'. Dropping them would "
         f"discard real information and bias estimates toward the sites that happened to enroll "
         f"fastest; treating their censoring time as an actual event time would understate how long "

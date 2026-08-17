@@ -3,29 +3,29 @@
 binomial regression on patients_enrolled_3mo) and scripts/model_site_success.py
 (logistic regression + gradient boosting on successful_site).
 
-Both production scripts build a SITE-level dataset -- one row per site,
+Both production scripts build a SITE-level dataset, one row per site,
 aggregating across every study that site has ever participated in. That
 grain is fine for the models themselves, but two of the checks below
 (temporal validation, study leakage) are inherently about generalizing
 across *studies*, which a table with no study_id column can't test. For
 those two checks only, this script reconstructs the same modeling problem
 (same features, same target thresholds, imported directly from the two
-production scripts) at STUDY-SITE grain -- one row per (study_id, site_id)
-pair -- documented at the point of use. The other four checks run directly
+production scripts) at STUDY-SITE grain: one row per (study_id, site_id)
+pair, documented at the point of use. The other four checks run directly
 against the production site-level datasets and models.
 
 studies.csv has no explicit start-date column. study_id ("STU-0000" ..
 "STU-0099") was assigned in generation order (scripts/generate_data.py
 iterates i=0..99), so its numeric suffix is used as a chronological proxy
-for study start order -- documented, not hidden.
+for study start order, documented, not hidden.
 
 Checks:
-    1. Leakage            -- are model features derived from future/enrollment data?
-    2. Temporal validation -- train on early studies, test on late studies, vs. random split
-    3. Study leakage       -- does any split let a study_id appear in both train and test?
-    4. Generalization      -- train on one therapeutic_area, test on another
-    5. Missing-data behavior -- zero out prior_trials/prior_enrollment_rate, check prediction stability
-    6. Bias check          -- predicted success rate by prior_trials bucket (few vs. many)
+    1. Leakage: are model features derived from future/enrollment data?
+    2. Temporal validation: train on early studies, test on late studies, vs. random split
+    3. Study leakage: does any split let a study_id appear in both train and test?
+    4. Generalization: train on one therapeutic_area, test on another
+    5. Missing-data behavior: zero out prior_trials/prior_enrollment_rate, check prediction stability
+    6. Bias check: predicted success rate by prior_trials bucket (few vs. many)
 
 Usage:
     python scripts/stress_test.py
@@ -65,7 +65,7 @@ pd.set_option("display.width", 140)
 # --------------------------------------------------------------------------
 
 def build_study_site_dataset() -> pd.DataFrame:
-    """One row per (study_id, site_id) pair -- see module docstring."""
+    """One row per (study_id, site_id) pair; see module docstring."""
     sites = pd.read_csv(DATA_DIR / "sites.csv")
     enrollment = pd.read_csv(DATA_DIR / "enrollment.csv")
 
@@ -242,7 +242,7 @@ def check_temporal_validation(df: pd.DataFrame, splits: dict, cutoff: float) -> 
 
     table["degradation_vs_naive_random"] = table.apply(drop, axis=1)
     print("(Positive degradation_vs_naive_random = worse than the leaky naive_random baseline, "
-          "for both metric directions. The NegBinomial MAE numbers are noisy across splits -- "
+          "for both metric directions. The NegBinomial MAE numbers are noisy across splits: "
           "patients_enrolled_3mo is heavily right-skewed [see model_enrollment.py's overdispersion "
           "finding], so a handful of high-count outlier rows can swing MAE more than any real "
           "leakage/temporal-shift effect at this sample size. The classification AUCs are the "
@@ -287,7 +287,7 @@ def check_generalization(enroll_df: pd.DataFrame, succ_df: pd.DataFrame,
           f"'cross_area' = all {test_area} sites. For MAE lower is better so degradation = cross - indist; "
           f"for AUC higher is better so degradation = indist - cross. Positive degradation = worse "
           f"out-of-area. The in-distribution MAE test set is small (~30 sites) and "
-          f"patients_enrolled_3mo is heavily right-skewed, so its MAE is noisier than the AUC rows -- "
+          f"patients_enrolled_3mo is heavily right-skewed, so its MAE is noisier than the AUC rows; "
           f"don't over-read a negative MAE degradation as real improvement from a single split.)")
     return pd.DataFrame(rows)
 
@@ -298,7 +298,7 @@ def check_generalization(enroll_df: pd.DataFrame, succ_df: pd.DataFrame,
 
 def check_missing_data(enroll_df: pd.DataFrame, succ_df: pd.DataFrame) -> pd.DataFrame:
     prior_trials_is_a_feature = "prior_trials" in FEATURES
-    print(f"(prior_trials in modeled FEATURES: {prior_trials_is_a_feature} -- it is a raw sites.csv "
+    print(f"(prior_trials in modeled FEATURES: {prior_trials_is_a_feature}; it is a raw sites.csv "
           f"column but was not selected as a model input in either production script, so zeroing it "
           f"cannot change these models' predictions by construction. Only prior_enrollment_rate, which "
           f"IS a feature, is simulated as zeroed below to mimic a genuinely new site with no track record.)")
@@ -371,10 +371,10 @@ def check_bias(succ_df: pd.DataFrame) -> pd.DataFrame:
     result = pd.concat([summary, gap_row])
 
     amplification = (gap["pred_logreg_rate"] - gap["actual_success_rate"], gap["pred_gbm_rate"] - gap["actual_success_rate"])
-    print(f"(Bucketed by prior_trials, which is NOT a model feature -- this tests whether predictions "
+    print(f"(Bucketed by prior_trials, which is NOT a model feature; this tests whether predictions "
           f"favor experienced sites via correlated features like site_experience/prior_enrollment_rate. "
-          f"Predicted-vs-actual gap amplification: LogReg {amplification[0]:+.3f}, GBM {amplification[1]:+.3f} "
-          f"-- near zero means the model isn't adding bias beyond real outcome differences between buckets.)")
+          f"Predicted-vs-actual gap amplification: LogReg {amplification[0]:+.3f}, GBM {amplification[1]:+.3f}, "
+          f"near zero means the model isn't adding bias beyond real outcome differences between buckets.)")
     return result
 
 
@@ -382,7 +382,7 @@ def check_bias(succ_df: pd.DataFrame) -> pd.DataFrame:
 
 def main():
     print("=" * 88)
-    print("CHECK 1: Leakage -- are features derived from future enrollment data?")
+    print("CHECK 1: Leakage: are features derived from future enrollment data?")
     print("=" * 88)
     print(check_leakage().to_string(index=False))
 
@@ -390,29 +390,29 @@ def main():
     splits, cutoff = make_splits(study_site_df)
 
     print("\n" + "=" * 88)
-    print("CHECK 3: Study leakage -- does any split let a study_id appear in both train and test?")
+    print("CHECK 3: Study leakage: does any split let a study_id appear in both train and test?")
     print("=" * 88)
     print("(Checked first since check 2's temporal-validation numbers should be read against it.)")
     print(check_study_leakage(splits).to_string(index=False))
 
     print("\n" + "=" * 88)
-    print("CHECK 2: Temporal validation -- train on early studies, test on late studies")
+    print("CHECK 2: Temporal validation: train on early studies, test on late studies")
     print("=" * 88)
     print(check_temporal_validation(study_site_df, splits, cutoff).to_string(index=False))
 
     print("\n" + "=" * 88)
-    print("CHECK 4: Generalization -- train on one therapeutic_area, test on another")
+    print("CHECK 4: Generalization: train on one therapeutic_area, test on another")
     print("=" * 88)
     enroll_df, succ_df = site_level_with_therapeutic_area()
     print(check_generalization(enroll_df, succ_df).to_string(index=False))
 
     print("\n" + "=" * 88)
-    print("CHECK 5: Missing-data behavior -- simulate a new site with no track record")
+    print("CHECK 5: Missing-data behavior: simulate a new site with no track record")
     print("=" * 88)
     print(check_missing_data(model_enrollment.build_dataset(), model_site_success.build_dataset()).to_string(index=False))
 
     print("\n" + "=" * 88)
-    print("CHECK 6: Bias check -- predicted success rate by prior_trials bucket")
+    print("CHECK 6: Bias check: predicted success rate by prior_trials bucket")
     print("=" * 88)
     print(check_bias(model_site_success.build_dataset()).to_string())
 

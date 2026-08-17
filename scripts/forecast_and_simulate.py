@@ -3,22 +3,22 @@
 
 Study: STU-0051 (Cardiology, Phase 3, target_enrollment=1,326, 27
 participating sites, 24 months of observed data). Picked because its
-historical cumulative enrollment crosses 500 patients around month 10 --
+historical cumulative enrollment crosses 500 patients around month 10,
 close enough to the 12-month checkpoint that "will it hit 500 by month 12"
 is a genuinely uncertain question, not a foregone conclusion either way.
 
-Part 1 -- forecasting: aggregates the study's monthly enrollment across all
+Part 1, forecasting: aggregates the study's monthly enrollment across all
 27 sites (sum of patients_enrolled per month) into a single time series,
 then fits an exponential smoothing model (Holt, damped additive trend) and
 an ARIMA(1,1,1) model (both statsmodels) to forecast the next 6 months.
 
-Part 2 -- Monte Carlo simulation: independent of Part 1's fitted models.
+Part 2, Monte Carlo simulation: independent of Part 1's fitted models.
 For each of the study's 27 sites, its historical mean monthly enrollment
 rate (from enrollment.csv) seeds a Poisson process. Each of 5,000
 iterations independently samples, per site: (a) an activation delay (0 or 1
 month, common startup jitter) plus a fixed +2 month delay applied every
 iteration to 3 designated "at-risk" sites (the 3 lowest quality_score sites
-in the cohort) -- a stress-tested scenario, not a random event -- and (b) a
+in the cohort), a stress-tested scenario rather than a random event, and (b) a
 per-iteration rate multiplier (lognormal, sigma=0.25) representing
 uncertainty in the site's true enrollment capability, on top of Poisson
 sampling noise for the monthly counts themselves. Trajectories are simulated
@@ -117,7 +117,7 @@ def run_monte_carlo(sub: pd.DataFrame, sites: pd.DataFrame, rng: np.random.Gener
 
     rate_multiplier = rng.lognormal(mean=0.0, sigma=0.25, size=(N_ITER, n_sites))
     # A per-iteration shock shared across all sites (referral pipeline strength,
-    # seasonal effects, competing-trial launches) -- unlike per-site noise, this
+    # seasonal effects, competing-trial launches). Unlike per-site noise, this
     # doesn't diversify away as more sites are pooled, so it's what keeps
     # P(reach target) from collapsing to ~100% just because there are 27 sites.
     systemic_shock = rng.lognormal(mean=0.0, sigma=0.15, size=(N_ITER, 1))

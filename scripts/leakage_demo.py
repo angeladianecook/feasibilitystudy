@@ -6,8 +6,8 @@ site activation) and adds one engineered from the eventual/future study
 outcome: final_enrollment_total, a site's total patients_enrolled summed
 across its ENTIRE observed history in data/enrollment.csv (every month of
 every study it participated in, not just early data). That number can only
-exist once a site has finished enrolling -- a deployed feasibility model
-would never have it at decision time -- and it is mechanically close to the
+exist once a site has finished enrolling. A deployed feasibility model
+would never have it at decision time, and it is mechanically close to the
 target itself: successful_site is defined as (mean enrolled/month >=
 threshold), and final_enrollment_total is that same history's numerator
 before dividing by months observed. Including it should make the classifier
@@ -92,7 +92,7 @@ def main():
 
     print(f"Dataset: {len(df)} sites, {df[TARGET].mean():.1%} successful")
     print(f"Leaked feature: {LEAKED_FEATURE} = total patients_enrolled summed across a site's "
-          f"ENTIRE enrollment.csv history (all months, all studies) -- only knowable after a "
+          f"ENTIRE enrollment.csv history (all months, all studies), only knowable after a "
           f"site has finished enrolling, not at decision time.\n")
 
     rows = []
@@ -116,8 +116,8 @@ def main():
         f"successful_site is defined as (mean patients_enrolled/month >= "
         f"{model_site_success.SUCCESS_THRESHOLD}), and {LEAKED_FEATURE} is that same enrollment "
         "history's numerator, just not divided by months observed. A real feasibility model can "
-        "never see this at decision time -- it doesn't exist until the site has already finished "
-        "enrolling -- so the 'with leak' numbers above are not a model anyone could deploy; they're "
+        "never see this at decision time; it doesn't exist until the site has already finished "
+        "enrolling. So the 'with leak' numbers above are not a model anyone could deploy; they're "
         "the warning sign to look for whenever a model's performance looks too good to be true."
     )
 

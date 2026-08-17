@@ -26,7 +26,7 @@ not_successful       0.84      0.84      0.84       136
   weighted avg       0.82      0.82      0.82       250
 ```
 
-Confusion matrix -- TN=114, FP=22, FN=22, TP=92
+Confusion matrix: TN=114, FP=22, FN=22, TP=92
 
 **Gradient Boosting**
 
@@ -41,12 +41,12 @@ not_successful       0.83      0.84      0.84       136
   weighted avg       0.82      0.82      0.82       250
 ```
 
-Confusion matrix -- TN=114, FP=22, FN=23, TP=91
+Confusion matrix: TN=114, FP=22, FN=23, TP=91
 
 ## Calibration at ~90% predicted probability
 
-- **Logistic Regression**: nearest bin to 90% predicted probability has mean predicted probability 85.3% (n=23 sites), and those sites actually succeeded 82.6% of the time (gap = -2.6%) -- **well-calibrated** at that bin.
-- **Gradient Boosting**: nearest bin to 90% predicted probability has mean predicted probability 85.0% (n=22 sites), and those sites actually succeeded 72.7% of the time (gap = -12.3%) -- **miscalibrated** at that bin.
+- **Logistic Regression**: nearest bin to 90% predicted probability has mean predicted probability 85.3% (n=23 sites), and those sites actually succeeded 82.6% of the time (gap = -2.6%), **well-calibrated** at that bin.
+- **Gradient Boosting**: nearest bin to 90% predicted probability has mean predicted probability 85.0% (n=22 sites), and those sites actually succeeded 72.7% of the time (gap = -12.3%), **miscalibrated** at that bin.
 
-See `outputs/calibration_plot.png` for the full reliability diagram (top) and the predicted-probability histogram per model (bottom), which shows how many test sites actually fall near each bin -- a single bin's calibration is only as trustworthy as its sample size.
+See `outputs/calibration_plot.png` for the full reliability diagram (top) and the predicted-probability histogram per model (bottom), which shows how many test sites actually fall near each bin. A single bin's calibration is only as trustworthy as its sample size.
 

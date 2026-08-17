@@ -10,8 +10,8 @@ competing-trial load) drives both `sites.prior_enrollment_rate` and the
 actual monthly enrollment in enrollment.csv, but each is drawn with its
 own noise term, so the two are correlated without being identical.
 `eligible_population` is generated mostly independently of capability, so
-some large-population sites perform poorly and some small ones overperform
--- deliberately, so downstream models have to learn that population alone
+some large-population sites perform poorly and some small ones overperform,
+deliberately, so downstream models have to learn that population alone
 is not predictive.
 
 Usage:
@@ -118,7 +118,7 @@ def gen_sites(rng: np.random.Generator) -> pd.DataFrame:
 
     # eligible_population: mostly independent of capability (weak 12% weight)
     # so some high-population sites underperform and some low-population
-    # sites overperform -- on purpose.
+    # sites overperform, on purpose.
     population_base = rng.lognormal(mean=9.2, sigma=1.0, size=N_SITES)
     eligible_population = np.clip(
         (population_base * (1 + 0.12 * capability)).round().astype(int), 100, None

@@ -7,7 +7,7 @@ Label (successful_site): a site is "successful" if it averaged at least
 participations in data/enrollment.csv (sites that never participated in
 any study count as 0/month). 1.5 patients/month is close to the median
 site's performance (median ~1.31) and gives a roughly balanced label
-(~45% positive over all 1,000 sites) -- an operationally meaningful bar
+(~45% positive over all 1,000 sites), an operationally meaningful bar
 (most feasibility teams would call anything enrolling less than 1-2
 patients a month a stalled site) rather than an arbitrary quantile split.
 
@@ -18,9 +18,9 @@ investigator_experience, startup_days, quality_score, competing_trials.
 Fits logistic regression (scaled) and gradient boosting on an identical
 train/test split, reports AUC, precision/recall, and a confusion matrix
 for both, plots a calibration curve (reliability diagram) with a count
-histogram to outputs/calibration_plot.png, and writes a short summary --
+histogram to outputs/calibration_plot.png, and writes a short summary,
 including whether sites predicted at ~90% actually succeed ~90% of the
-time -- to outputs/site_success_model_summary.md.
+time, to outputs/site_success_model_summary.md.
 
 Usage:
     python scripts/model_site_success.py
@@ -213,7 +213,7 @@ def write_summary(df, results, near_90, out_path: Path):
         lines += [f"**{res['name']}**", "", "```", res["report"].rstrip(), "```", ""]
         cm = res["cm"]
         lines += [
-            f"Confusion matrix -- TN={cm[0, 0]}, FP={cm[0, 1]}, FN={cm[1, 0]}, TP={cm[1, 1]}",
+            f"Confusion matrix: TN={cm[0, 0]}, FP={cm[0, 1]}, FN={cm[1, 0]}, TP={cm[1, 1]}",
             "",
         ]
 
@@ -226,13 +226,13 @@ def write_summary(df, results, near_90, out_path: Path):
             f"predicted probability {info['bin_mean_predicted']:.1%} "
             f"(n={info['bin_n']} sites), and those sites actually succeeded "
             f"{info['bin_observed_rate']:.1%} of the time "
-            f"(gap = {gap:+.1%}) -- **{verdict}** at that bin."
+            f"(gap = {gap:+.1%}), **{verdict}** at that bin."
         )
     lines += [
         "",
         "See `outputs/calibration_plot.png` for the full reliability diagram "
         "(top) and the predicted-probability histogram per model (bottom), "
-        "which shows how many test sites actually fall near each bin -- a "
+        "which shows how many test sites actually fall near each bin. A "
         "single bin's calibration is only as trustworthy as its sample size.",
         "",
     ]
