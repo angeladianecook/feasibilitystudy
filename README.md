@@ -101,3 +101,24 @@ interactive exploration.
 Run `jupyter lab` from the project root (with `venv` activated) to work
 through the notebooks, or run any script in `scripts/` directly for the
 full analysis and saved outputs.
+
+## Run everything
+
+From a clean checkout, this is the full pipeline in order (each modeling
+script depends on `data/*.csv` from `generate_data.py`; `run_queries.py`
+additionally depends on `data/icon.duckdb` from `load_duckdb.py`):
+
+```bash
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+python scripts/generate_data.py
+python scripts/load_duckdb.py
+python scripts/run_queries.py
+python scripts/model_enrollment.py
+python scripts/model_site_success.py
+python scripts/survival_analysis.py
+python scripts/forecast_and_simulate.py
+python scripts/stress_test.py
+python scripts/leakage_demo.py
+```
