@@ -12,3 +12,5 @@ jupyterlab>=4.2
 sqlalchemy>=2.0
 faker>=25.0
 python-dateutil>=2.9
+duckdb>=1.0
+tabulate>=0.9

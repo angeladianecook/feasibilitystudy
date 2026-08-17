@@ -13,5 +13,6 @@ data/raw/*.csv
 data/processed/*.csv
 data/*.csv
 data/*.db
+data/*.duckdb
 !data/raw/.gitkeep
 !data/processed/.gitkeep
