@@ -1,0 +1,14 @@
+pandas>=2.2
+numpy>=1.26
+scipy>=1.13
+scikit-learn>=1.5
+xgboost>=2.0
+statsmodels>=0.14
+lifelines>=0.29
+matplotlib>=3.9
+seaborn>=0.13
+jupyter>=1.0
+jupyterlab>=4.2
+sqlalchemy>=2.0
+faker>=25.0
+python-dateutil>=2.9

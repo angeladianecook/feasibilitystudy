@@ -1,0 +1,15 @@
+venv/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.pytest_cache/
+*.egg-info/
+.env
+.DS_Store
+
+# Generated data (regenerate via scripts/generate_synthetic_data.py)
+data/raw/*.csv
+data/processed/*.csv
+data/*.db
+!data/raw/.gitkeep
+!data/processed/.gitkeep
